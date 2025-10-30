@@ -20,6 +20,14 @@ def init_db():
             amount REAL NOT NULL,
             type TEXT CHECK(type IN ('income','expense')) NOT NULL
         )
+
+        """)
+    #Catagories table
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS catagories (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT UNIQUE NOT NULL
+        )
     """)
     
     conn.commit()
@@ -36,6 +44,16 @@ def print_transactions_pretty():
     print(tabulate(rows, headers=headers, tablefmt="grid"))
     conn.close()
 
+def print_catagories_pretty():
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    
+    cursor.execute("SELECT * FROM catagories")
+    rows = cursor.fetchall()
+    headers = [description[0] for description in cursor.description]  # get column names
+    
+    print(tabulate(rows, headers=headers, tablefmt="grid"))
+    conn.close()
 
 def add_transaction():
     print("Enter Transaction Info")
