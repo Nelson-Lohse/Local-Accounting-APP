@@ -33,7 +33,6 @@ def init_db():
     
     conn.commit()
     conn.close()
-    
 def print_transactions_pretty():
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
@@ -42,10 +41,8 @@ def print_transactions_pretty():
     rows = cursor.fetchall()
     headers = [description[0] for description in cursor.description]  # get column names
     
-    print(tabulate(rows, headers=headers, tablefmt="grid"))
+    print(tabulate(rows, headers=headers, tablefmt="grid") + "\n")
     conn.close()
-
-
 def print_catagories_pretty():
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
@@ -54,10 +51,8 @@ def print_catagories_pretty():
     rows = cursor.fetchall()
     headers = [description[0] for description in cursor.description]  # get column names
     
-    print(tabulate(rows, headers=headers, tablefmt="grid"))
+    print(tabulate(rows, headers=headers, tablefmt="grid") + "\n")
     conn.close()
-
-
 def add_transaction(description, category, amount, transaction_type, date=None):
     print("Enter Transaction Info")
     if date is None:
@@ -78,6 +73,24 @@ def add_transaction(description, category, amount, transaction_type, date=None):
     conn.close()
 
     print(f"Transaction added: {description}, {category}, {amount}, {transaction_type}, {date}")
+def delete_transaction(transaction_id):
+    # Connect to database
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    
+    # Delete query The ? is a placeholder this syntax is neccesary to prevent SQL injection and is a good practice the ? will be substituded wiht teh transaction_id
+    cursor.execute("DELETE FROM transactions WHERE id = ?", (transaction_id,))
+    
+    # Commit and close
+    conn.commit()
+    conn.close()
+    print(f"Transaction {transaction_id} deleted successfully.")
+
+
+
+
+
+# TODO complete these functions
 
 def get_transactions():
     print("List Transactions")
@@ -87,19 +100,6 @@ def get_transaction_catagory(catagory):
 
 def update_transaction(transaction):
     print( transaction + "updated")
-
-def delete_transaction(transaction_id):
-    # Connect to database
-    conn = sqlite3.connect(DB_PATH)
-    cursor = conn.cursor()
-    
-    # Delete query
-    cursor.execute("DELETE FROM transactions WHERE id = ?", (transaction_id,))
-    
-    # Commit and close
-    conn.commit()
-    conn.close()
-    print(f"Transaction {transaction_id} deleted successfully.")
 
 def get_income():
     print("all income")
