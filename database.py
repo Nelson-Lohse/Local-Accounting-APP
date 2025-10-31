@@ -1,6 +1,7 @@
 import sqlite3
 import os
 from tabulate import tabulate
+from datetime import datetime
 
 DB_PATH = "data/accounting.db"
 
@@ -44,6 +45,7 @@ def print_transactions_pretty():
     print(tabulate(rows, headers=headers, tablefmt="grid"))
     conn.close()
 
+
 def print_catagories_pretty():
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
@@ -55,8 +57,27 @@ def print_catagories_pretty():
     print(tabulate(rows, headers=headers, tablefmt="grid"))
     conn.close()
 
-def add_transaction():
+
+def add_transaction(description, category, amount, transaction_type, date=None):
     print("Enter Transaction Info")
+    if date is None:
+        date  = datetime.today().strftime('%Y-%m-%d')
+    
+    if transaction_type not in ['income', 'expense']:
+        raise ValueError("Transaction type must be 'income' or 'expense'")
+    
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        INSERT INTO transactions (date, description, category, amount, type)
+        VALUES (?, ?, ?, ?, ?) 
+    """, (date, description, category, amount, transaction_type))
+
+    conn.commit()
+    conn.close()
+
+    print(f"Transaction added: {description}, {category}, {amount}, {transaction_type}, {date}")
 
 def get_transactions():
     print("List Transactions")
@@ -67,8 +88,18 @@ def get_transaction_catagory(catagory):
 def update_transaction(transaction):
     print( transaction + "updated")
 
-def delete_transaction(transaction):
-    print("deleted" + transaction)
+def delete_transaction(transaction_id):
+    # Connect to database
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    
+    # Delete query
+    cursor.execute("DELETE FROM transactions WHERE id = ?", (transaction_id,))
+    
+    # Commit and close
+    conn.commit()
+    conn.close()
+    print(f"Transaction {transaction_id} deleted successfully.")
 
 def get_income():
     print("all income")
