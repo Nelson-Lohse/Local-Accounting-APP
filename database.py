@@ -93,17 +93,92 @@ def delete_transaction(transaction_id):
 # TODO complete these functions
 
 def get_transactions():
-    print("List Transactions")
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM transactions")
+    rows = cursor.fetchall()
+    print("List Transactions\n")
+    print(rows)
+    return rows
 
 def get_transaction_catagory(catagory):
-    print( catagory + "transactions")
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM transactions WHERE category = ?", (catagory,))
+    rows = cursor.fetchall()
+    print( catagory + " transactions\n")
+    print(rows)
+    return rows
 
-def update_transaction(transaction):
-    print( transaction + "updated")
+def update_transaction(id, description=None, category=None, amount=None, transaction_type=None, date=None):
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
 
-def get_income():
-    print("all income")
+    cursor.execute("SELECT * FROM transactions WHERE id = ?", (id,))
+    transaction = cursor.fetchone()
+    if not transaction:
+        print("Transaction not found.\n")
+        return
+    updated_description = description if description is not None else transaction[2]
+    updated_category = category if category is not None else transaction[3]
+    updated_amount = amount if amount is not None else transaction[4]
+    updated_type = transaction_type if transaction_type is not None else transaction[5]
+    updated_date = date if date is not None else transaction[1]
+    cursor.execute("""
+        UPDATE transactions
+        SET description = ?, category = ?, amount = ?, type = ?, date = ?
+        WHERE id = ?
+    """, (updated_description, updated_category, updated_amount, updated_type, updated_date, id))
+    conn.commit()
+    conn.close()
+    print(f"Transaction {id} updated successfully.\n")
+    
 
-def get_expenses():
-    print("all expenses")
+def get_income_transactions():
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM transactions WHERE type = 'income'")
+    rows = cursor.fetchall()
+    
+    print("all income\n")
+    print(rows)
+    return rows
 
+def income():
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    cursor.execute("SELECT SUM(amount) FROM transactions WHERE type = 'income'")
+    income = cursor.fetchone()[0] or 0
+    print(f"Total Income: {income}\n")
+    return income
+
+def get_expenses_transactions():
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM transactions WHERE type = 'expense'")
+    rows = cursor.fetchall()
+
+    print("all expenses\n")
+    print(rows)
+    return rows
+
+def expenses():
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    cursor.execute("SELECT SUM(amount) FROM transactions WHERE type = 'expense'")
+    expenses = cursor.fetchone()[0] or 0
+    print(f"Total Expenses: {expenses}\n")
+    return expenses
+
+def get_revenue():
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    cursor.execute("SELECT SUM(amount) FROM transactions WHERE type = 'income'")
+    income = cursor.fetchone()[0] or 0
+
+    cursor.execute("SELECT SUM(amount) FROM transactions WHERE type = 'expense'")
+    expenses = cursor.fetchone()[0] or 0
+
+    revenue = income - expenses
+    print(f"Total Revenue: {revenue}\n")
+    return revenue
