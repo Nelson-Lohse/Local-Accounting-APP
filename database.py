@@ -85,13 +85,6 @@ def delete_transaction(transaction_id):
     conn.commit()
     conn.close()
     print(f"Transaction {transaction_id} deleted successfully.")
-
-
-
-
-
-# TODO complete these functions
-
 def get_transactions():
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
@@ -109,7 +102,6 @@ def get_transaction_catagory(catagory):
     print( catagory + " transactions\n")
     print(rows)
     return rows
-
 def update_transaction(id, description=None, category=None, amount=None, transaction_type=None, date=None):
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
@@ -132,8 +124,6 @@ def update_transaction(id, description=None, category=None, amount=None, transac
     conn.commit()
     conn.close()
     print(f"Transaction {id} updated successfully.\n")
-    
-
 def get_income_transactions():
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
@@ -143,7 +133,6 @@ def get_income_transactions():
     print("all income\n")
     print(rows)
     return rows
-
 def income():
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
@@ -151,7 +140,6 @@ def income():
     income = cursor.fetchone()[0] or 0
     print(f"Total Income: {income}\n")
     return income
-
 def get_expenses_transactions():
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
@@ -161,7 +149,6 @@ def get_expenses_transactions():
     print("all expenses\n")
     print(rows)
     return rows
-
 def expenses():
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
@@ -169,7 +156,6 @@ def expenses():
     expenses = cursor.fetchone()[0] or 0
     print(f"Total Expenses: {expenses}\n")
     return expenses
-
 def get_revenue():
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
