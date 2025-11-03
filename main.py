@@ -5,6 +5,7 @@ import database as db
 def main():
     print("Start Accounting APP\n")
     db.init_db()
+    """
 
     db.add_catagory("Income")
     db.add_catagory("Food")
@@ -45,7 +46,7 @@ def main():
     db.add_transaction("Salary July", "Salary", 5000.00, "income", "2024-06-29")
     db.add_transaction("Dinner Out", "Food", 60.00, "expense", "2024-06-30")    
     ###
-    
+    """
 
 
     print("Transactions table")

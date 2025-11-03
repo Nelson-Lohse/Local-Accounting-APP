@@ -169,6 +169,7 @@ def get_revenue():
     print(f"Total Revenue: {revenue}\n")
     return revenue
 def add_catagory(name):
+
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
     
@@ -177,3 +178,26 @@ def add_catagory(name):
     conn.commit()
     conn.close()
     print(f"Catagory added: {name}\n")
+
+def get_category_totals():
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+
+    # Query sums for each category grouped by type
+    cursor.execute("""
+        SELECT c.name,
+               SUM(CASE WHEN t.type='income' THEN t.amount ELSE 0 END) AS total_income,
+               SUM(CASE WHEN t.type='expense' THEN t.amount ELSE 0 END) AS total_expense
+        FROM catagories c
+        LEFT JOIN transactions t ON c.name = t.category
+        GROUP BY c.name
+    """)
+
+    rows = cursor.fetchall()
+    conn.close()
+    return rows
+
+
+
+
+
