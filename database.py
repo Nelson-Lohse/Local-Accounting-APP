@@ -93,7 +93,6 @@ def get_transactions():
     print("List Transactions\n")
     print(rows)
     return rows
-
 def get_transaction_catagory(catagory):
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
@@ -157,6 +156,7 @@ def expenses():
     print(f"Total Expenses: {expenses}\n")
     return expenses
 def get_revenue():
+
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
     cursor.execute("SELECT SUM(amount) FROM transactions WHERE type = 'income'")
@@ -168,3 +168,12 @@ def get_revenue():
     revenue = income - expenses
     print(f"Total Revenue: {revenue}\n")
     return revenue
+def add_catagory(name):
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    
+    cursor.execute("INSERT INTO catagories (name) VALUES (?)", (name,))
+    
+    conn.commit()
+    conn.close()
+    print(f"Catagory added: {name}\n")
